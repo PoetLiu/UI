@@ -1,8 +1,8 @@
-function Slider(domId, itemId, itemNum, stepLen, interval, duration) {
+function Slider(domId, stepLen, interval, duration) {
     this.domId = domId;
-    this.itemDomId = itemId;
-    this.itemNum = itemNum;
-    this.nowId = 0;
+    this.items = [];
+    this.itemNum = 0;
+    this.nowId  = 0;
     this.stepLen = stepLen;
     this.interval = interval;
     this.duration = duration;
@@ -11,11 +11,19 @@ function Slider(domId, itemId, itemNum, stepLen, interval, duration) {
 }
 
 Slider.prototype.init = function () {
+    var self    = this;
     $(this.domId).hover(
         this.onMouseHover.bind(this),
         this.onMouseLeave.bind(this)
     );
+
+    $(this.domId).find("li").each(function () {
+        self.items.push(this);
+    });
+    this.itemNum    = this.items.length;
+    // console.log(this.items);
 };
+
 
 Slider.prototype.onMouseHover   = function () {
     // console.log("On mouse hover!");
@@ -29,14 +37,15 @@ Slider.prototype.onMouseLeave  = function () {
 
 Slider.prototype.idNext = function () {
     this.nowId++;
-    if (this.nowId > this.itemNum) {
+    if (this.nowId >= this.itemNum) {
         this.nowId = 0;
     }
     return this.nowId;
 };
 
-Slider.prototype.slide = function (id) {
-    var self = this, item = this.itemDomId+id;
+Slider.prototype.slide = function (item) {
+    var self    = this;
+    console.log(this, item);
     $(item).animate(
         {
             left: "-=" + this.stepLen
@@ -59,15 +68,23 @@ Slider.prototype.resetPosition  = function (item) {
 };
 
 Slider.prototype.getNextId = function () {
-    return (this.nowId === this.itemNum) ? 0 : this.nowId + 1;
+    return (this.nowId === this.itemNum-1) ? 0 : this.nowId + 1;
+};
+
+Slider.prototype.getNextItem    = function () {
+    return this.items[this.getNextId()];
+};
+
+Slider.prototype.getNowItem = function () {
+    return this.items[this.nowId];
 };
 
 Slider.prototype.update = function () {
     if (this.pause) {
         return;
     }
-    this.slide(this.nowId);
-    this.slide(this.getNextId());
+    this.slide(this.getNowItem());
+    this.slide(this.getNextItem());
     this.idNext();
 };
 
