@@ -6,8 +6,26 @@ function Slider(domId, itemId, itemNum, stepLen, interval, duration) {
     this.stepLen = stepLen;
     this.interval = interval;
     this.duration = duration;
-
+    this.pause  = false;
+    this.init();
 }
+
+Slider.prototype.init = function () {
+    $(this.domId).hover(
+        this.onMouseHover.bind(this),
+        this.onMouseLeave.bind(this)
+    );
+};
+
+Slider.prototype.onMouseHover   = function () {
+    // console.log("On mouse hover!");
+    this.pause  = true;
+};
+
+Slider.prototype.onMouseLeave  = function () {
+    // console.log("On mouse leave!");
+    this.pause  = false;
+};
 
 Slider.prototype.idNext = function () {
     this.nowId++;
@@ -45,16 +63,17 @@ Slider.prototype.getNextId = function () {
 };
 
 Slider.prototype.update = function () {
-    var self = this;
-    window.setTimeout(function () {
-        self.slide(self.nowId);
-        self.slide(self.getNextId());
-        self.idNext();
-
-        self.update();
-    }, this.interval);
+    if (this.pause) {
+        return;
+    }
+    this.slide(this.nowId);
+    this.slide(this.getNextId());
+    this.idNext();
 };
 
 Slider.prototype.start = function () {
-    this.update();
+    var self    = this;
+    window.setInterval(function () {
+        self.update();
+    }, this.interval);
 };
