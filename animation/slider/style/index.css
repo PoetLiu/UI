@@ -12,30 +12,22 @@ body {
 
 .slider {
     position: relative;
+    width: 225px;
+    height: 165px;
+    overflow: hidden;
 }
 
 .slider ul li {
     position: absolute;
-    left: 0;
-}
+    left: 100%;
 
-.slide-left {
-    -webkit-transform: translateX(-100%);
-    -moz-transform: translateX(-100%);
-    -ms-transform: translateX(-100%);
-    -o-transform: translateX(-100%);
-    transform: translateX(-100%);
-}
-
-.slide-right {
-    -webkit-transform: translateX(100%);
-    -moz-transform: translateX(100%);
-    -ms-transform: translateX(100%);
-    -o-transform: translateX(100%);
-    transform: translateX(100%);
     -webkit-transition: -webkit-transform 1s;
     -moz-transition: -moz-transform 1s;
     -ms-transition: -ms-transform 1s;
     -o-transition: -o-transform 1s;
     transition: transform 1s;
+}
+
+.slider ul li:first-child {
+    left: 0;
 }
