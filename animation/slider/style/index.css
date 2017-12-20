@@ -20,12 +20,6 @@ body {
 .slider ul li {
     position: absolute;
     left: 100%;
-
-    -webkit-transition: -webkit-transform 1s;
-    -moz-transition: -moz-transform 1s;
-    -ms-transition: -ms-transform 1s;
-    -o-transition: -o-transform 1s;
-    transition: transform 1s;
 }
 
 .slider ul li:first-child {
