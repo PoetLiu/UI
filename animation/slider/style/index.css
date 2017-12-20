@@ -19,7 +19,7 @@ body {
     left: 0;
 }
 
-.slider-item-left {
+.slide-left {
     -webkit-transform: translateX(-100%);
     -moz-transform: translateX(-100%);
     -ms-transform: translateX(-100%);
@@ -27,7 +27,7 @@ body {
     transform: translateX(-100%);
 }
 
-.slider-item-right {
+.slide-right {
     -webkit-transform: translateX(100%);
     -moz-transform: translateX(100%);
     -ms-transform: translateX(100%);
