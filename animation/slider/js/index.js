@@ -5,7 +5,7 @@ function init() {
         2,
         225,
         3000,
-        1000);
+        500);
 
     slider.start();
 }

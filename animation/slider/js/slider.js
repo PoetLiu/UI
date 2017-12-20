@@ -25,11 +25,15 @@ Slider.prototype.slide = function (id) {
     }, this.duration, function () {
         var left = parseInt($(this).css('left'));
         if (left === -self.stepLen) {
-            $(this).animate({
-                left: "+=" + (self.stepLen * 2)
-            }, 0);
+            self.resetPosition(this);
         }
     });
+};
+
+Slider.prototype.resetPosition  = function (dom) {
+    $(dom).animate({
+        left: "+=" + (this.stepLen * 2)
+    }, 0);
 };
 
 Slider.prototype.getNextId = function () {
