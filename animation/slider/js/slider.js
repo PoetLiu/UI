@@ -1,5 +1,7 @@
-function Slider(domId, stepLen, interval, duration, navDuration) {
+function Slider(domId, bgId, navId, highlight, stepLen, interval, duration, navDuration) {
     this.domId = domId;
+    this.bgId = bgId;
+    this.navId = navId;
     this.items = [];
     this.navItems = [];
     this.itemNum = 0;
@@ -9,7 +11,7 @@ function Slider(domId, stepLen, interval, duration, navDuration) {
     this.duration = duration;
     this.navDuration = navDuration;
     this.pause  = false;
-    this.highlightName = "nav-highlight";
+    this.highlightName = highlight;
     this.init();
 }
 
@@ -20,19 +22,18 @@ Slider.prototype.init = function () {
         this.onMouseLeave.bind(this)
     );
 
-    $(this.domId+'-nav-ul').find("li").each(function () {
+    $(this.bgId).find("li").each(function () {
+        self.items.push(this);
+    });
+    this.itemNum    = this.items.length;
+
+    $(this.navId).find("li").each(function () {
+        self.navItems.push(this);
+
         $(this).click(function () {
             self.slideTo(this);
         });
     });
-
-    $(this.domId+"-bg-ul").find("li").each(function () {
-        self.items.push(this);
-    });
-    $(this.domId+"-nav-ul").find("li").each(function () {
-        self.navItems.push(this);
-    });
-    this.itemNum    = this.items.length;
     // console.log(this.items);
 
     this.navHighlight(this.getNowNav(), true);
