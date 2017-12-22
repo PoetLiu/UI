@@ -3,7 +3,8 @@ function init() {
         "#slider",
         225,
         3000,
-        500);
+        500,
+        200);
 
     slider.start();
 }

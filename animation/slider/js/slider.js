@@ -1,4 +1,4 @@
-function Slider(domId, stepLen, interval, duration) {
+function Slider(domId, stepLen, interval, duration, navDuration) {
     this.domId = domId;
     this.items = [];
     this.navItems = [];
@@ -7,6 +7,7 @@ function Slider(domId, stepLen, interval, duration) {
     this.stepLen = stepLen;
     this.interval = interval;
     this.duration = duration;
+    this.navDuration = navDuration;
     this.pause  = false;
     this.highlightName = "nav-highlight";
     this.init();
@@ -18,6 +19,12 @@ Slider.prototype.init = function () {
         this.onMouseHover.bind(this),
         this.onMouseLeave.bind(this)
     );
+
+    $(this.domId+'-nav-ul').find("li").each(function () {
+        $(this).click(function () {
+            self.slideTo(this);
+        });
+    });
 
     $(this.domId+"-bg-ul").find("li").each(function () {
         self.items.push(this);
@@ -31,6 +38,18 @@ Slider.prototype.init = function () {
     this.navHighlight(this.getNowNav(), true);
 };
 
+Slider.prototype.slideTo = function (nav) {
+    var id = this.navItems.indexOf(nav);
+    if (id === -1) {
+        console.log(nav+"doesn't exist!.");
+        return;
+    }
+
+    while (id !== this.nowId) {
+        // console.log(id, this);
+        this.update('nav');
+    }
+};
 
 Slider.prototype.onMouseHover   = function () {
     // console.log("On mouse hover!");
@@ -63,17 +82,16 @@ Slider.prototype.navUpdate = function () {
    this.navHighlight(this.getPrevNav(), false);
 };
 
-Slider.prototype.slide = function (item) {
+Slider.prototype.slide = function (item, mode) {
     var self    = this;
     // console.log(this, item);
     $(item).animate(
         {
             left: "-=" + this.stepLen
         },
-        this.duration,
+        (mode && mode === 'nav')? this.navDuration: this.duration,
         function () {
             self.resetPosition(this);
-            self.navUpdate();
         }
     );
 };
@@ -112,18 +130,19 @@ Slider.prototype.getNowNav = function () {
     return this.navItems[this.nowId];
 };
 
-Slider.prototype.update = function () {
-    if (this.pause) {
-        return;
-    }
-    this.slide(this.getNowItem());
-    this.slide(this.getNextItem());
+Slider.prototype.update = function (mode) {
+    this.slide(this.getNowItem(), mode);
+    this.slide(this.getNextItem(), mode);
     this.idNext();
+    this.navUpdate();
 };
 
 Slider.prototype.start = function () {
     var self    = this;
     window.setInterval(function () {
+        if (self.pause) {
+            return;
+        }
         self.update();
     }, this.interval);
 };
