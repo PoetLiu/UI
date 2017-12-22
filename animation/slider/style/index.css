@@ -17,6 +17,10 @@ body {
     overflow: hidden;
 }
 
+.slider:hover {
+    cursor: pointer;
+}
+
 .slider ul li {
     position: absolute;
     left: 100%;
