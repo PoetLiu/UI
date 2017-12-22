@@ -5,7 +5,6 @@ function Slider(domId, bgId, navDotId, navPageId,
     this.domId = domId;
     this.bgId = bgId;
     this.navDotId = navDotId;
-    this.navPageId  = navPageId;
     this.items = [];
     this.navItems = [];
     this.itemNum = 0;
@@ -16,6 +15,7 @@ function Slider(domId, bgId, navDotId, navPageId,
     this.navDuration = navDuration;
     this.pause  = false;
     this.highlightName = highlight;
+    this.dir    = 'left';
     this.init();
 }
 
@@ -35,7 +35,7 @@ Slider.prototype.init = function () {
         self.navItems.push(this);
 
         $(this).click(function () {
-            self.slideTo(this);
+            self.slideToId(this);
         });
     });
     // console.log(this.items);
@@ -43,17 +43,39 @@ Slider.prototype.init = function () {
     this.navHighlight(this.getNowNav(), true);
 };
 
-Slider.prototype.slideTo = function (nav) {
+Slider.prototype.slideToId = function (nav) {
     var id = this.navItems.indexOf(nav);
     if (id === -1) {
         console.log(nav+"doesn't exist!.");
         return;
     }
 
+    var reverse = id < this.nowId;
+    if (reverse) {
+        this.reverse();
+    }
+
     while (id !== this.nowId) {
         // console.log(id, this);
         this.update('nav');
     }
+
+    // Reverse back.
+    // Use default dir.
+    if (reverse) {
+        this.reverse();
+    }
+};
+
+Slider.prototype.reverse    = function () {
+    this.ChangeDir(this.dir === 'left' ? 'right' : 'left');
+};
+
+Slider.prototype.ChangeDir  = function (dir) {
+    if (this.dir === dir)
+        return;
+    console.log("Dir changed from:" + this.dir + " to:" + dir);
+    this.dir    = dir;
 };
 
 Slider.prototype.onMouseHover   = function () {
@@ -67,10 +89,18 @@ Slider.prototype.onMouseLeave  = function () {
 };
 
 Slider.prototype.idNext = function () {
-    this.nowId++;
+    if (this.dir === 'left') {
+        this.nowId++;
+    } else {
+        this.nowId--;
+    }
+
     if (this.nowId >= this.itemNum) {
         this.nowId = 0;
+    } else if (this.nowId < 0) {
+        this.nowId  = this.itemNum-1;
     }
+
     return this.nowId;
 };
 
@@ -87,36 +117,49 @@ Slider.prototype.navUpdate = function () {
    this.navHighlight(this.getPrevNav(), false);
 };
 
-Slider.prototype.slide = function (item, mode) {
-    var self    = this;
-    // console.log(this, item);
+Slider.prototype.slideItem = function (item, mode) {
+    this.nextItemPrepare();
     $(item).animate(
         {
-            left: "-=" + this.stepLen
+            left: (this.dir === "left" ? "-=" : "+=") + this.stepLen
         },
-        (mode && mode === 'nav')? this.navDuration: this.duration,
-        function () {
-            self.resetPosition(this);
-        }
+        (mode && mode === 'nav')? this.navDuration: this.duration
     );
 };
 
-Slider.prototype.resetPosition  = function (item) {
-    // console.log(dom);
-    if (parseInt($(item).css('left')) !== -this.stepLen) {
+Slider.prototype.slide = function (mode) {
+    this.slideItem(this.getNowItem(), mode);
+    this.slideItem(this.getNextItem(), mode);
+};
+
+Slider.prototype.nextItemPrepare = function () {
+    var next    = this.getNextItem();
+    var nextLeft = parseInt($(next).css('left'));
+
+    if ((this.dir === 'left' && nextLeft === this.stepLen)
+        || (this.dir ==='right' && nextLeft === -this.stepLen)) {
         return;
     }
-    $(item).animate({
-        left: "+=" + (this.stepLen * 2)
+
+    $(next).animate({
+        left: (this.dir === "left" ? "+=" : "-=") + (this.stepLen * 2)
     }, 0);
 };
 
 Slider.prototype.getNextId = function () {
-    return (this.nowId === this.itemNum-1) ? 0 : this.nowId + 1;
+    if (this.dir === 'left') {
+        return (this.nowId === this.itemNum-1) ? 0 : this.nowId + 1;
+    } else {
+        return (this.nowId === 0) ? this.itemNum-1 : this.nowId - 1;
+    }
 };
 
 Slider.prototype.getPrevId = function () {
-    return (this.nowId === 0) ? this.itemNum-1 : this.nowId - 1;
+    if (this.dir === 'left') {
+        return (this.nowId === 0) ? this.itemNum - 1 : this.nowId - 1;
+    } else {
+        return (this.nowId === this.itemNum-1) ? 0 : this.nowId + 1;
+    }
 };
 
 Slider.prototype.getNextItem    = function () {
@@ -136,8 +179,7 @@ Slider.prototype.getNowNav = function () {
 };
 
 Slider.prototype.update = function (mode) {
-    this.slide(this.getNowItem(), mode);
-    this.slide(this.getNextItem(), mode);
+    this.slide(mode);
     this.idNext();
     this.navUpdate();
 };
