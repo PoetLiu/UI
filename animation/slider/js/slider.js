@@ -1,12 +1,14 @@
 function Slider(domId, stepLen, interval, duration) {
     this.domId = domId;
     this.items = [];
+    this.navItems = [];
     this.itemNum = 0;
     this.nowId  = 0;
     this.stepLen = stepLen;
     this.interval = interval;
     this.duration = duration;
     this.pause  = false;
+    this.highlightName = "nav-highlight";
     this.init();
 }
 
@@ -20,8 +22,13 @@ Slider.prototype.init = function () {
     $(this.domId+"-bg-ul").find("li").each(function () {
         self.items.push(this);
     });
+    $(this.domId+"-nav-ul").find("li").each(function () {
+        self.navItems.push(this);
+    });
     this.itemNum    = this.items.length;
     // console.log(this.items);
+
+    this.navHighlight(this.getNowNav(), true);
 };
 
 
@@ -43,9 +50,22 @@ Slider.prototype.idNext = function () {
     return this.nowId;
 };
 
+Slider.prototype.navHighlight = function (nav, highlight) {
+   if (highlight)  {
+       $(nav).addClass(this.highlightName);
+   } else {
+       $(nav).removeClass(this.highlightName);
+    }
+};
+
+Slider.prototype.navUpdate = function () {
+   this.navHighlight(this.getNowNav(), true);
+   this.navHighlight(this.getPrevNav(), false);
+};
+
 Slider.prototype.slide = function (item) {
     var self    = this;
-    console.log(this, item);
+    // console.log(this, item);
     $(item).animate(
         {
             left: "-=" + this.stepLen
@@ -53,6 +73,7 @@ Slider.prototype.slide = function (item) {
         this.duration,
         function () {
             self.resetPosition(this);
+            self.navUpdate();
         }
     );
 };
@@ -71,12 +92,24 @@ Slider.prototype.getNextId = function () {
     return (this.nowId === this.itemNum-1) ? 0 : this.nowId + 1;
 };
 
+Slider.prototype.getPrevId = function () {
+    return (this.nowId === 0) ? this.itemNum-1 : this.nowId - 1;
+};
+
 Slider.prototype.getNextItem    = function () {
     return this.items[this.getNextId()];
 };
 
 Slider.prototype.getNowItem = function () {
     return this.items[this.nowId];
+};
+
+Slider.prototype.getPrevNav = function () {
+    return this.navItems[this.getPrevId()];
+};
+
+Slider.prototype.getNowNav = function () {
+    return this.navItems[this.nowId];
 };
 
 Slider.prototype.update = function () {

@@ -55,6 +55,10 @@ body {
     margin: 0 2px;
 }
 
+.nav-highlight {
+    background-color: white;
+}
+
 .slider-nav-ul li:hover {
     background-color: white;
 }
