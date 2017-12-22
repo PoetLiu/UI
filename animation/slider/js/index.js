@@ -2,7 +2,8 @@ function init() {
     var slider = new Slider(
         "#slider",
         "#slider-bg-ul",
-        "#slider-nav-ul",
+        "#slider-nav-dot-ul",
+        "#slider-nav-page-ul",
         "nav-highlight",
         225,
         3000,

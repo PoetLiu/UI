@@ -1,7 +1,10 @@
-function Slider(domId, bgId, navId, highlight, stepLen, interval, duration, navDuration) {
+function Slider(domId, bgId, navDotId, navPageId,
+                highlight, stepLen, interval,
+                duration, navDuration) {
     this.domId = domId;
     this.bgId = bgId;
-    this.navId = navId;
+    this.navDotId = navDotId;
+    this.navPageId  = navPageId;
     this.items = [];
     this.navItems = [];
     this.itemNum = 0;
@@ -27,7 +30,7 @@ Slider.prototype.init = function () {
     });
     this.itemNum    = this.items.length;
 
-    $(this.navId).find("li").each(function () {
+    $(this.navDotId).find("li").each(function () {
         self.navItems.push(this);
 
         $(this).click(function () {
