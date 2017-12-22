@@ -1,6 +1,7 @@
 function Slider(domId, bgId, navDotId, navPageId,
-                highlight, stepLen, interval,
-                duration, navDuration) {
+                highlight, stepLen,
+                interval, duration, navDuration)
+{
     this.domId = domId;
     this.bgId = bgId;
     this.navDotId = navDotId;
