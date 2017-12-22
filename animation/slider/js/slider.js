@@ -17,7 +17,7 @@ Slider.prototype.init = function () {
         this.onMouseLeave.bind(this)
     );
 
-    $(this.domId).find("li").each(function () {
+    $(this.domId+"-bg-ul").find("li").each(function () {
         self.items.push(this);
     });
     this.itemNum    = this.items.length;
