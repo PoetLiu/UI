@@ -85,11 +85,11 @@ body {
 }
 
 .slider-nav-page.left {
-    left: 0;
+    left: 20px;
 }
 
 .slider-nav-page.right {
-    right: 0;
+    right: 20px;
 }
 
 .slider-nav-page.left:before,
