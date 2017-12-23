@@ -3,9 +3,9 @@ function init() {
         "#slider",
         "#slider-bg-ul",
         "#slider-nav-dot-ul",
-        "#slider-nav-page-ul",
+        "slider-nav-page",
         "nav-highlight",
-        225,
+        1000,
         3000,
         500,
         200);
