@@ -45,6 +45,7 @@ Slider.prototype.init = function () {
 
 Slider.prototype.slideToId = function (nav) {
     var id = this.navItems.indexOf(nav);
+    var self = this;
     if (id === -1) {
         console.log(nav+"doesn't exist!.");
         return;
@@ -55,16 +56,18 @@ Slider.prototype.slideToId = function (nav) {
         this.reverse();
     }
 
-    while (id !== this.nowId) {
-        // console.log(id, this);
-        this.update('nav');
-    }
-
-    // Reverse back.
-    // Use default dir.
-    if (reverse) {
-        this.reverse();
-    }
+    this.update('nav', function cb() {
+        if (id !== self.nowId) {
+            self.update('nav', cb);
+            return;
+        }
+        // Reverse back.
+        // Use default dir.
+        if (reverse) {
+            console.log("reverse!");
+            self.reverse();
+        }
+    });
 };
 
 Slider.prototype.reverse    = function () {
@@ -117,19 +120,24 @@ Slider.prototype.navUpdate = function () {
    this.navHighlight(this.getPrevNav(), false);
 };
 
-Slider.prototype.slideItem = function (item, mode) {
+Slider.prototype.slideItem = function (item, mode, done) {
     this.nextItemPrepare();
     $(item).animate(
         {
             left: (this.dir === "left" ? "-=" : "+=") + this.stepLen
         },
-        (mode && mode === 'nav')? this.navDuration: this.duration
+        (mode && mode === 'nav')? this.navDuration: this.duration,
+        function () {
+           if (done)  {
+               done();
+           }
+        }
     );
 };
 
-Slider.prototype.slide = function (mode) {
+Slider.prototype.slide = function (mode, done) {
     this.slideItem(this.getNowItem(), mode);
-    this.slideItem(this.getNextItem(), mode);
+    this.slideItem(this.getNextItem(), mode, done);
 };
 
 Slider.prototype.nextItemPrepare = function () {
@@ -178,8 +186,8 @@ Slider.prototype.getNowNav = function () {
     return this.navItems[this.nowId];
 };
 
-Slider.prototype.update = function (mode) {
-    this.slide(mode);
+Slider.prototype.update = function (mode, done) {
+    this.slide(mode, done);
     this.idNext();
     this.navUpdate();
 };
